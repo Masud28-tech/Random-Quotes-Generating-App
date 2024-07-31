@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import $ from 'jquery';
 
 function App() {
-  const [quote, setQuote ] = useState('');
+  const [quote, setQuote] = useState('');
   const [author, setAuthor] = useState('');
 
   const config = {
@@ -20,17 +20,29 @@ function App() {
       setAuthor('-' + quote.author);
     });
   }
+
+  useEffect(() => {
+    $.ajax(config).done(function (response) {
+      const quotes = JSON.parse(response);
+      const quote = quotes[0];
+      setQuote(quote.text);
+      setAuthor('-' + quote.author);
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <div id="quote-box container-fluid">
+      <div id="quote-box" className="container text-center">
         <div id="text">{quote}</div>
         <div id="author">{author}</div>
-        <button id="new-quote" onClick={handleChange}>New Quote</button>
-        <div id="links">
-          <span id="tweet-quote"></span>
+        <div id="links" className="container-fluid">
+          <button className="btn btn-primary" id="new-quote" onClick={handleChange}>
+            New Quote
+          </button>
+          <a target="_blank" href="https://x.com/intent/post" className="btn btn-info text-white" id="tweet-quote" rel="noreferrer">
+            Tweet Quote
+          </a>
         </div>
       </div>
-    </div>
   );
 }
 
